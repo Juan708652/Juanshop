@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - JUANSHOP</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: linear-gradient(135deg, #0a0a0a, #1a1a2e);
+            font-family: Arial, sans-serif;
+            color: white;
+            padding: 20px;
+        }
+        .container { max-width: 1200px; margin: auto; }
+        h1 { color: #00ff88; margin-bottom: 10px; }
+        .nav {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            background: rgba(0,0,0,0.5);
+            padding: 12px 20px;
+            border-radius: 50px;
+            flex-wrap: wrap;
+        }
+        .nav a {
+            color: white;
+            text-decoration: none;
+            padding: 8px 20px;
+            border-radius: 30px;
+        }
+        .nav a.active, .nav a:hover {
+            background: #00ff88;
+            color: black;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(0,0,0,0.5);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #333;
+        }
+        th { color: #00ff88; }
+        .status-pending { color: #ffaa00; }
+        .status-completed { color: #00ff88; }
+        .btn {
+            background: #00aa55;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 2px;
+        }
+        .btn-primary { background: #00ff88; color: black; }
+        .btn-danger { background: #ff4444; }
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #00ff88;
+            color: black;
+            padding: 12px 20px;
+            border-radius: 12px;
+            display: none;
+            z-index: 1001;
+        }
+        .summary {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .card {
+            background: rgba(0,0,0,0.5);
+            padding: 15px;
+            border-radius: 12px;
+            flex: 1;
+            text-align: center;
+        }
+        .card .value { font-size: 24px; font-weight: bold; color: #00ff88; }
+        .filter-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        .filter-bar input {
+            padding: 8px 12px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid #333;
+            border-radius: 8px;
+            color: white;
+            flex: 1;
+        }
+        .filter-bar select {
+            padding: 8px 12px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid #333;
+            border-radius: 8px;
+            color: white;
+        }
+        .bulk-actions {
+            margin-bottom: 15px;
+            padding: 10px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 12px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .checkbox-col { width: 40px; text-align: center; }
+        .checkbox-col input { transform: scale(1.2); cursor: pointer; }
+        .refresh-indicator {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .auto-refresh-badge {
+            background: #00ff8822;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            color: #00ff88;
+        }
+        .refresh-btn {
+            background: #333;
+            border: none;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+        .refresh-btn:hover {
+            background: #00ff88;
+            color: black;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="nav">
+            <a href="/" target="_blank">🏠 Home</a>
+            <a href="/admin" class="active">📊 Dashboard</a>
+            <a href="/logout">🚪 Logout</a>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h1>📊 JUANSHOP ADMIN</h1>
+            <div class="refresh-indicator">
+                <span class="auto-refresh-badge" id="autoRefreshStatus">🔄 Auto Refresh: 10 detik</span>
+                <button class="refresh-btn" onclick="manualRefresh()">🔄 Refresh Sekarang</button>
+            </div>
+        </div>
+        <p>Selamat datang, {{ username }}! 👑</p>
+
+        <div class="summary">
+            <div class="card">
+                <div class="value" id="totalOrders">0</div>
+                <div>Total Order</div>
+            </div>
+            <div class="card">
+                <div class="value" id="pendingCount">0</div>
+                <div>Pending Topup</div>
+            </div>
+            <div class="card">
+                <div class="value" id="completedCount">0</div>
+                <div>Selesai</div>
+            </div>
+        </div>
+
+        <div class="filter-bar">
+            <input type="text" id="searchInput" placeholder="🔍 Cari order ID, nama, user ID..." onkeyup="filterTable()">
+            <select id="filterStatus" onchange="filterTable()">
+                <option value="all">Semua Status</option>
+                <option value="pending">Pending</option>
+                <option value="completed">Completed</option>
+            </select>
+            <select id="filterMetode" onchange="filterTable()">
+                <option value="all">Semua Metode</option>
+                <option value="dana">DANA</option>
+                <option value="cash">CASH</option>
+            </select>
+            <button class="btn" onclick="hapusSemuaCompleted()" style="background:#ff4444;">🗑️ Hapus Semua Completed</button>
+        </div>
+
+        <div class="bulk-actions">
+            <input type="checkbox" id="selectAll" onclick="toggleSelectAll()">
+            <label for="selectAll">Pilih Semua</label>
+            <button class="btn" onclick="hapusTerpilih()" style="background:#ff4444;">🗑️ Hapus Terpilih</button>
+        </div>
+
+        <h3>📜 DAFTAR ORDER</h3>
+        <div style="overflow-x: auto;">
+            <table id="orderTable">
+                <thead>
+                    <tr>
+                        <th class="checkbox-col">Pilih</th>
+                        <th>Order ID</th>
+                        <th>Customer / WA</th>
+                        <th>User ID</th>
+                        <th>Produk</th>
+                        <th>Harga</th>
+                        <th>Metode</th>
+                        <th>Status</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    <tr><td colspan="9" style="text-align:center">Loading...</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div style="margin-top: 20px; padding: 12px; background: rgba(0,255,136,0.1); border-radius: 12px;">
+            💡 <strong>Tips:</strong>
+            <ul style="margin-left: 20px; margin-top: 5px;">
+                <li><strong>🔄 Auto Refresh</strong> → Data otomatis update setiap 10 detik</li>
+                <li><strong>KIRIM</strong> → Proses topup otomatis ke akun customer (setelah customer bayar)</li>
+                <li><strong>🗑️</strong> → Hapus order dari daftar</li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="toastMsg" class="toast"></div>
+
+    <script>
+        let ordersData = [];
+        let refreshInterval = null;
+        let currentFilter = {
+            search: '',
+            status: 'all',
+            metode: 'all'
+        };
+
+        // ========== AMBIL DATA DARI SERVER ==========
+        async function fetchOrders() {
+            try {
+                const res = await fetch('/api/admin/get-orders');
+                const data = await res.json();
+                if(data.success) {
+                    ordersData = data.orders;
+                    renderTable();
+                    updateSummary();
+                }
+            } catch(e) {
+                console.log('Error fetch orders:', e);
+            }
+        }
+
+        // ========== RENDER TABEL ==========
+        function renderTable() {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+
+            // Filter data
+            let filteredData = [...ordersData];
+            if(currentFilter.search) {
+                const search = currentFilter.search.toLowerCase();
+                filteredData = filteredData.filter(o =>
+                    o.order_id?.toLowerCase().includes(search) ||
+                    o.customer_name?.toLowerCase().includes(search) ||
+                    o.customer_phone?.toLowerCase().includes(search) ||
+                    o.customer_id?.toLowerCase().includes(search)
+                );
+            }
+            if(currentFilter.status !== 'all') {
+                filteredData = filteredData.filter(o => o.status === currentFilter.status);
+            }
+            if(currentFilter.metode !== 'all') {
+                filteredData = filteredData.filter(o => o.metode === currentFilter.metode);
+            }
+
+            if(filteredData.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="9" style="text-align:center">Belum ada order</td></tr>';
+                return;
+            }
+
+            filteredData.forEach(order => {
+                const row = tbody.insertRow();
+                row.id = `row-${order.order_id}`;
+                row.setAttribute('data-status', order.status);
+                row.setAttribute('data-metode', order.metode);
+
+                // checkbox
+                const cbCell = row.insertCell(0);
+                cbCell.className = 'checkbox-col';
+                cbCell.innerHTML = `<input type="checkbox" class="order-checkbox" value="${order.order_id}">`;
+
+                // order id
+                row.insertCell(1).innerHTML = order.order_id;
+
+                // customer
+                row.insertCell(2).innerHTML = `${order.customer_name || '-'}<br><small>${order.customer_phone || '-'}</small>`;
+
+                // user id
+                row.insertCell(3).innerHTML = order.customer_id;
+
+                // product
+                row.insertCell(4).innerHTML = order.product_name;
+
+                // price
+                row.insertCell(5).innerHTML = `Rp ${(order.price || 0).toLocaleString()}`;
+
+                // metode
+                row.insertCell(6).innerHTML = `<span style="${order.metode === 'cash' ? 'color:#ff8800;font-weight:bold;' : ''}">${order.metode?.toUpperCase() || '-'}</span>`;
+
+                // status
+                row.insertCell(7).innerHTML = `<span class="status-${order.status}">${order.status || 'pending'}</span>`;
+
+                // action
+                const actionCell = row.insertCell(8);
+                if(order.status === 'pending') {
+                    actionCell.innerHTML = `
+                        <button class="btn btn-primary" onclick="prosesTopup('${order.order_id}', '${order.customer_id}', '${order.product_name}')">🚀 KIRIM</button>
+                        <button class="btn" onclick="hapusOrder('${order.order_id}')" style="background:#ff4444;">🗑️</button>
+                    `;
+                } else {
+                    actionCell.innerHTML = `<button class="btn" onclick="hapusOrder('${order.order_id}')" style="background:#ff4444;">🗑️</button>`;
+                }
+            });
+        }
+
+        function updateSummary() {
+            const total = ordersData.length;
+            const pending = ordersData.filter(o => o.status === 'pending').length;
+            const completed = ordersData.filter(o => o.status === 'completed').length;
+            document.getElementById('totalOrders').innerText = total;
+            document.getElementById('pendingCount').innerText = pending;
+            document.getElementById('completedCount').innerText = completed;
+        }
+
+        function filterTable() {
+            currentFilter.search = document.getElementById('searchInput').value.toLowerCase();
+            currentFilter.status = document.getElementById('filterStatus').value;
+            currentFilter.metode = document.getElementById('filterMetode').value;
+            renderTable();
+        }
+
+        function toggleSelectAll() {
+            const selectAll = document.getElementById('selectAll');
+            const checkboxes = document.querySelectorAll('.order-checkbox');
+            checkboxes.forEach(cb => cb.checked = selectAll.checked);
+        }
+
+        function manualRefresh() {
+            showToast('🔄 Memperbarui data...');
+            fetchOrders();
+        }
+
+        async function hapusOrder(orderId) {
+            if(!confirm('Yakin ingin menghapus order ini?')) return;
+            try {
+                const res = await fetch('/api/admin/delete-order', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ order_id: orderId })
+                });
+                const data = await res.json();
+                if(data.success) {
+                    showToast('✅ Order dihapus');
+                    fetchOrders();
+                } else {
+                    showToast('❌ Gagal hapus');
+                }
+            } catch(e) {
+                showToast('❌ Error: ' + e.message);
+            }
+        }
+
+        async function hapusTerpilih() {
+            const checkboxes = document.querySelectorAll('.order-checkbox:checked');
+            if(checkboxes.length === 0) {
+                showToast('Pilih order yang akan dihapus');
+                return;
+            }
+            if(confirm(`Hapus ${checkboxes.length} order yang dipilih?`)) {
+                const ids = Array.from(checkboxes).map(cb => cb.value);
+                for(let id of ids) {
+                    await fetch('/api/admin/delete-order', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({ order_id: id })
+                    });
+                }
+                showToast(`✅ ${ids.length} order dihapus`);
+                document.getElementById('selectAll').checked = false;
+                fetchOrders();
+            }
+        }
+
+        async function hapusSemuaCompleted() {
+            const completedOrders = ordersData.filter(o => o.status === 'completed');
+            if(completedOrders.length === 0) {
+                showToast('Tidak ada order completed');
+                return;
+            }
+            if(confirm(`Hapus ${completedOrders.length} order yang sudah selesai?`)) {
+                for(let order of completedOrders) {
+                    await fetch('/api/admin/delete-order', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({ order_id: order.order_id })
+                    });
+                }
+                showToast(`✅ Semua order completed dihapus`);
+                fetchOrders();
+            }
+        }
+
+        async function prosesTopup(orderId, userId, productName) {
+            if(confirm(`Kirim ${productName} ke ID Free Fire: ${userId}?\n\nPastikan customer sudah membayar!`)) {
+                showToast('⏳ Mengirim diamond...');
+                try {
+                    const res = await fetch('/api/admin/process-topup', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({ order_id: orderId })
+                    });
+                    const data = await res.json();
+                    if(data.success) {
+                        showToast('✅ ' + data.message);
+                        fetchOrders();  // Refresh data setelah topup
+                    } else {
+                        showToast('❌ ' + data.message);
+                    }
+                } catch(e) {
+                    showToast('❌ Error: ' + e.message);
+                }
+            }
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toastMsg');
+            toast.innerText = msg;
+            toast.style.display = 'block';
+            setTimeout(() => toast.style.display = 'none', 3000);
+        }
+
+        // ========== START AUTO REFRESH ==========
+        function startAutoRefresh() {
+            if(refreshInterval) clearInterval(refreshInterval);
+            refreshInterval = setInterval(() => {
+                fetchOrders();
+                let statusSpan = document.getElementById('autoRefreshStatus');
+                if(statusSpan) {
+                    statusSpan.innerHTML = '🔄 Auto Refresh: ' + new Date().toLocaleTimeString();
+                    setTimeout(() => {
+                        statusSpan.innerHTML = '🔄 Auto Refresh: 10 detik';
+                    }, 2000);
+                }
+            }, 10000); // Refresh setiap 10 detik
+        }
+
+        // Event listeners untuk filter
+        document.getElementById('searchInput')?.addEventListener('keyup', filterTable);
+        document.getElementById('filterStatus')?.addEventListener('change', filterTable);
+        document.getElementById('filterMetode')?.addEventListener('change', filterTable);
+
+        // Inisialisasi
+        fetchOrders();
+        startAutoRefresh();
+    </script>
+</body>
+</html>
