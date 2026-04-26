@@ -42,6 +42,7 @@ def kirim_ke_telegram(pesan):
         print(f"Error Telegram: {e}")
 
 def topup_via_api(user_id, sku, amount):
+def topup_via_api(user_id, sku, amount):
     try:
         headers = {
             "Authorization": f"Bearer {TOPUPBOY_API_KEY}",
@@ -53,12 +54,26 @@ def topup_via_api(user_id, sku, amount):
             "sku": sku,
             "amount": amount
         }
+
+        print(f"📤 Sending to: {TOPUPBOY_API_URL}")
+        print(f"Payload: {payload}")
+
         response = requests.post(TOPUPBOY_API_URL, json=payload, headers=headers, timeout=30)
-        result = response.json()
-        if response.status_code == 200 and result.get('status') == 'success':
-            return {'success': True, 'ref_id': result.get('ref_id')}
+
+        print(f"📥 Status Code: {response.status_code}")
+        print(f"📥 Response Text: {response.text[:200]}")  # tampilkan 200 karakter pertama
+
+        if response.status_code == 200:
+            try:
+                result = response.json()
+                if result.get('status') == 'success':
+                    return {'success': True, 'ref_id': result.get('ref_id')}
+                else:
+                    return {'success': False, 'message': result.get('message', 'Gagal topup')}
+            except Exception as json_err:
+                return {'success': False, 'message': f"Response bukan JSON: {response.text[:100]}"}
         else:
-            return {'success': False, 'message': result.get('message', 'Gagal topup')}
+            return {'success': False, 'message': f"HTTP {response.status_code}: {response.text[:100]}"}
     except Exception as e:
         return {'success': False, 'message': str(e)}
 
