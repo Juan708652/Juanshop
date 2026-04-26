@@ -1,1 +1,737 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>JUANSHOP - Topup Diamond MLBB & FF</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: linear-gradient(135deg, #0a0a0a, #1a1a2e);
+            font-family: -apple-system, 'Segoe UI', Roboto, sans-serif;
+            color: white;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 550px;
+            margin: auto;
+            background: rgba(0,0,0,0.6);
+            border-radius: 24px;
+            padding: 20px;
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(0,255,136,0.3);
+        }
+        h1 {
+            text-align: center;
+            background: linear-gradient(135deg, #00ff88, #00ccff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 5px;
+        }
+        .sub {
+            text-align: center;
+            font-size: 12px;
+            color: #aaa;
+            margin-bottom: 20px;
+        }
 
+        /* Game Selector */
+        .game-selector {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .game-btn {
+            flex: 1;
+            background: rgba(255,255,255,0.1);
+            border: none;
+            padding: 14px;
+            border-radius: 40px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            font-size: 16px;
+        }
+        .game-btn.active {
+            background: linear-gradient(135deg, #00aa55, #0088cc);
+            box-shadow: 0 0 10px #00ff88;
+        }
+
+        .form-group { margin-bottom: 15px; }
+        .form-group label { font-size: 12px; color: #aaa; display: block; margin-bottom: 5px; }
+        .form-group input {
+            width: 100%;
+            padding: 14px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid #333;
+            border-radius: 12px;
+            color: white;
+            font-size: 16px;
+        }
+
+        /* METODE PEMBAYARAN */
+        .payment-section {
+            margin: 20px 0;
+            background: rgba(0,0,0,0.3);
+            border-radius: 16px;
+            padding: 15px;
+        }
+        .payment-title {
+            font-size: 14px;
+            color: #aaa;
+            margin-bottom: 12px;
+            border-left: 3px solid #00ff88;
+            padding-left: 10px;
+        }
+        .payment-options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .payment-option {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .payment-option.selected {
+            background: #00ff88;
+            color: black;
+            border-color: #00ff88;
+        }
+        .payment-option-icon {
+            font-size: 28px;
+            width: 45px;
+            text-align: center;
+        }
+        .payment-option-text {
+            flex: 1;
+        }
+        .payment-option-name {
+            font-weight: bold;
+            font-size: 16px;
+        }
+        .payment-option-desc {
+            font-size: 11px;
+            opacity: 0.7;
+        }
+        .radio-custom {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #00ff88;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        .selected .radio-custom {
+            background: #00ff88;
+            box-shadow: inset 0 0 0 4px #1a1a2e;
+        }
+
+        /* VOUCHER SECTION */
+        .voucher-section {
+            margin: 15px 0;
+        }
+        .voucher-title {
+            font-size: 12px;
+            color: #aaa;
+            margin-bottom: 8px;
+        }
+        .voucher-input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .voucher-input-group input {
+            flex: 1;
+            padding: 12px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid #333;
+            border-radius: 12px;
+            color: white;
+            font-size: 14px;
+            text-transform: uppercase;
+        }
+        .voucher-input-group button {
+            background: #333;
+            padding: 12px 20px;
+            border-radius: 12px;
+            width: auto;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            color: white;
+        }
+        .voucher-applied {
+            background: rgba(0,255,136,0.15);
+            border: 1px solid #00ff88;
+            border-radius: 12px;
+            padding: 10px;
+            margin-top: 10px;
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .voucher-applied span {
+            color: #00ff88;
+            font-weight: bold;
+        }
+        .voucher-applied button {
+            background: #ff4444;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+        }
+        .used-vouchers-info {
+            font-size: 10px;
+            color: #888;
+            margin-top: 8px;
+            padding: 5px;
+            border-radius: 8px;
+            background: rgba(0,0,0,0.3);
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 12px;
+            margin: 20px 0;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .product-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 12px;
+            text-align: center;
+            cursor: pointer;
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: 0.3s;
+            position: relative;
+        }
+        .product-card:hover {
+            background: rgba(0,255,136,0.15);
+            transform: scale(1.02);
+            border-color: #00ff88;
+        }
+        .product-name {
+            font-size: 13px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .product-price {
+            color: #00ff88;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        .product-price-original {
+            font-size: 11px;
+            text-decoration: line-through;
+            color: #888;
+            margin-top: 3px;
+        }
+        .product-game {
+            font-size: 10px;
+            color: #aaa;
+            margin-top: 3px;
+        }
+        .discount-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #ff4444;
+            color: white;
+            font-size: 10px;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.95);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background: #1a1a2e;
+            border-radius: 20px;
+            padding: 25px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            border: 1px solid #00ff88;
+        }
+        .modal-content h3 {
+            color: #00ff88;
+            margin-bottom: 15px;
+        }
+        .modal-content .detail {
+            background: rgba(0,255,136,0.1);
+            padding: 12px;
+            border-radius: 12px;
+            margin: 15px 0;
+            text-align: left;
+        }
+        .modal-content .detail p {
+            margin: 5px 0;
+            font-size: 14px;
+        }
+        .discount-info {
+            color: #ffaa00;
+            font-size: 12px;
+        }
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .modal-buttons button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 12px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .btn-yes {
+            background: #00ff88;
+            color: black;
+        }
+        .btn-no {
+            background: #ff4444;
+            color: white;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            background: #00ff88;
+            color: black;
+            padding: 12px;
+            border-radius: 12px;
+            text-align: center;
+            display: none;
+            z-index: 999;
+            font-weight: bold;
+        }
+        .footer {
+            text-align: center;
+            font-size: 10px;
+            color: #555;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>JUANSHOP</h1>
+        <div class="sub">Topup Diamond | MLBB & Free Fire</div>
+
+        <!-- GAME SELECTOR -->
+        <div class="game-selector">
+            <button class="game-btn active" onclick="selectGame('MLBB')">MLBB</button>
+            <button class="game-btn" onclick="selectGame('FF')">FREE FIRE</button>
+        </div>
+
+        <!-- FORM CUSTOMER -->
+        <div class="form-group">
+            <input type="text" id="customerName" placeholder="Nama kamu">
+        </div>
+        <div class="form-group">
+            <input type="tel" id="customerPhone" placeholder="Nomor WhatsApp (WAJIB)">
+        </div>
+        <div class="form-group">
+            <input type="text" id="customerId" placeholder="User ID Game (WAJIB)">
+        </div>
+
+        <!-- METODE PEMBAYARAN -->
+        <div class="payment-section">
+            <div class="payment-title">Metode Pembayaran</div>
+            <div class="payment-options">
+                <div class="payment-option selected" data-payment="dana" onclick="selectPayment('dana')">
+                    <div class="payment-option-icon">💙</div>
+                    <div class="payment-option-text">
+                        <div class="payment-option-name">DANA</div>
+                        <div class="payment-option-desc">Transfer ke DANA 6289654652309</div>
+                    </div>
+                    <div class="radio-custom"></div>
+                </div>
+                <div class="payment-option" data-payment="cash" onclick="selectPayment('cash')">
+                    <div class="payment-option-icon">💰</div>
+                    <div class="payment-option-text">
+                        <div class="payment-option-name">Cash</div>
+                        <div class="payment-option-desc">Bayar langsung ke JUAN</div>
+                    </div>
+                    <div class="radio-custom"></div>
+                </div>
+            </div>
+
+            <!-- VOUCHER SYSTEM -->
+            <div class="voucher-section">
+                <div class="voucher-title">🎟️ Kode Voucher (Diskon)</div>
+                <div class="voucher-input-group">
+                    <input type="text" id="voucherCode" placeholder="Masukkan kode voucher">
+                    <button id="applyVoucherBtn">Gunakan</button>
+                </div>
+                <div id="voucherApplied" class="voucher-applied">
+                    <span>🎟️ Voucher <span id="voucherCodeDisplay"></span> aktif!</span>
+                    <button id="removeVoucherBtn">Hapus</button>
+                </div>
+                <div id="usedVouchersInfo" class="used-vouchers-info"></div>
+            </div>
+        </div>
+
+        <!-- PRODUK -->
+        <div id="productList" class="product-grid"></div>
+        <div class="footer">Order akan dikonfirmasi via Telegram. Simpan ORDER ID!</div>
+    </div>
+
+    <!-- MODAL KONFIRMASI -->
+    <div id="confirmModal" class="modal">
+        <div class="modal-content">
+            <h3>⚠️ KONFIRMASI PEMBELIAN</h3>
+            <div id="modalDetail" class="detail"></div>
+            <div class="modal-buttons">
+                <button class="btn-yes" id="confirmYes">✅ YA, LANJUTKAN</button>
+                <button class="btn-no" id="confirmNo">❌ BATAL</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toastMsg" class="toast"></div>
+
+    <script>
+        const produk = {{ products | tojson }};
+        const danaNumber = {{ dana_number | tojson }};
+        let selectedGame = 'FF';
+        let selectedPayment = 'dana';
+        let activeVoucher = null;
+        let pendingOrder = null;
+
+        // ========== FUNGSI PEMBULATAN HARGA CASH ==========
+        function bulatkanHargaCash(harga) {
+            if(harga <= 1000) {
+                return 2000;
+            } else {
+                return Math.ceil(harga / 1000) * 1000;
+            }
+        }
+
+        // ========== HITUNG HARGA FINAL (DENGAN VOUCHER & CASH) ==========
+        function getFinalPrice(originalPrice, withVoucher = true, isCash = false) {
+            let price = originalPrice;
+
+            // Terapkan voucher dulu
+            if(withVoucher && activeVoucher) {
+                const voucher = VOUCHERS[activeVoucher];
+                if(voucher) {
+                    if(voucher.type === 'percent') {
+                        price = price - (price * voucher.value / 100);
+                    } else if(voucher.type === 'nominal') {
+                        price = price - voucher.value;
+                    }
+                    price = Math.max(0, price);
+                }
+            }
+
+            // Jika cash, bulatkan harga
+            if(isCash) {
+                price = bulatkanHargaCash(price);
+            }
+
+            return Math.floor(price);
+        }
+
+        // ========== DAFTAR VOUCHER ==========
+        const VOUCHERS = {
+            'JUAN10': { type: 'percent', value: 10, name: 'Diskon 10%' },
+            'JUAN20': { type: 'percent', value: 20, name: 'Diskon 20%' },
+            'WANZ': { type: 'nominal', value: 2000, name: 'Potong Rp2.000' },
+            'MBUT': { type: 'percent', value: 50, name: 'Diskon 50%' }
+        };
+
+        // ========== VOUCHER PER NOMOR HP (LOCALSTORAGE) ==========
+        function getPhoneForVoucher() {
+            return document.getElementById('customerPhone').value.trim();
+        }
+
+        function hasUsedVoucher(voucherCode) {
+            const phone = getPhoneForVoucher();
+            if(!phone || phone.length < 8) return false;
+            const key = `usedVouchers_${phone}`;
+            const usedData = localStorage.getItem(key);
+            if(!usedData) return false;
+            const usedVouchers = JSON.parse(usedData);
+            return usedVouchers.includes(voucherCode);
+        }
+
+        function markVoucherUsed(voucherCode) {
+            const phone = getPhoneForVoucher();
+            if(!phone) return;
+            const key = `usedVouchers_${phone}`;
+            let usedVouchers = [];
+            const existingData = localStorage.getItem(key);
+            if(existingData) usedVouchers = JSON.parse(existingData);
+            if(!usedVouchers.includes(voucherCode)) {
+                usedVouchers.push(voucherCode);
+                localStorage.setItem(key, JSON.stringify(usedVouchers));
+            }
+        }
+
+        function removeVoucherFromStorage(voucherCode) {
+            const phone = getPhoneForVoucher();
+            if(!phone) return;
+            const key = `usedVouchers_${phone}`;
+            const existingData = localStorage.getItem(key);
+            if(existingData) {
+                let usedVouchers = JSON.parse(existingData);
+                usedVouchers = usedVouchers.filter(v => v !== voucherCode);
+                localStorage.setItem(key, JSON.stringify(usedVouchers));
+            }
+        }
+
+        function updateUsedVouchersDisplay() {
+            const phone = getPhoneForVoucher();
+            const infoDiv = document.getElementById('usedVouchersInfo');
+            if(!infoDiv) return;
+            if(phone && phone.length >= 8) {
+                const key = `usedVouchers_${phone}`;
+                const existingData = localStorage.getItem(key);
+                if(existingData) {
+                    const usedVouchers = JSON.parse(existingData);
+                    infoDiv.innerHTML = usedVouchers.length > 0 ? `📜 Voucher sudah dipakai: ${usedVouchers.join(', ')}` : '🎟️ Belum ada voucher yang dipakai dari nomor ini';
+                    infoDiv.style.color = usedVouchers.length > 0 ? '#ffaa00' : '#888';
+                } else {
+                    infoDiv.innerHTML = '🎟️ Belum ada voucher yang dipakai dari nomor ini';
+                    infoDiv.style.color = '#888';
+                }
+            } else {
+                infoDiv.innerHTML = '📱 Masukkan nomor WhatsApp untuk cek voucher';
+                infoDiv.style.color = '#666';
+            }
+        }
+
+        function applyVoucher() {
+            const code = document.getElementById('voucherCode').value.trim().toUpperCase();
+            const phone = getPhoneForVoucher();
+            if(!code) { showToast('Masukkan kode voucher!'); return; }
+            if(!phone || phone.length < 8) { showToast('Masukkan nomor WhatsApp terlebih dahulu!'); return; }
+            if(!VOUCHERS[code]) { showToast('❌ Kode voucher tidak valid!'); return; }
+            if(hasUsedVoucher(code)) { showToast(`❌ Voucher ${code} sudah pernah digunakan dari nomor ${phone}!`); return; }
+            activeVoucher = code;
+            document.getElementById('voucherCodeDisplay').innerText = code;
+            document.getElementById('voucherApplied').style.display = 'flex';
+            document.getElementById('voucherCode').value = '';
+            showToast(`✅ ${VOUCHERS[code].name} berhasil digunakan!`);
+            markVoucherUsed(code);
+            displayProducts();
+            updateUsedVouchersDisplay();
+        }
+
+        function removeVoucher() {
+            if(activeVoucher) removeVoucherFromStorage(activeVoucher);
+            activeVoucher = null;
+            document.getElementById('voucherApplied').style.display = 'none';
+            showToast('Voucher dihapus');
+            displayProducts();
+            updateUsedVouchersDisplay();
+        }
+
+        function formatPrice(price) {
+            return 'Rp ' + price.toLocaleString();
+        }
+
+        // ========== GAME & PRODUK ==========
+        function selectGame(game) {
+            selectedGame = game;
+            document.querySelectorAll('.game-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if(btn.innerText === game) btn.classList.add('active');
+            });
+            displayProducts();
+        }
+
+        function selectPayment(payment) {
+            selectedPayment = payment;
+            document.querySelectorAll('.payment-option').forEach(opt => {
+                opt.classList.remove('selected');
+                if(opt.getAttribute('data-payment') === payment) {
+                    opt.classList.add('selected');
+                }
+            });
+            // refresh harga saat metode berubah
+            displayProducts();
+        }
+
+        function displayProducts() {
+            const container = document.getElementById('productList');
+            container.innerHTML = '';
+            const isCash = (selectedPayment === 'cash');
+
+            for(let code in produk) {
+                const p = produk[code];
+                if(p.game === selectedGame) {
+                    const originalPrice = p.price;
+                           const finalPrice = getFinalPrice(originalPrice, true, isCash);
+                    const hasDiscount = finalPrice !== originalPrice && (activeVoucher || isCash);
+
+                    let priceHtml = `<div class="product-price">${formatPrice(finalPrice)}</div>`;
+                    if(hasDiscount) {
+                        priceHtml += `<div class="product-price-original">${formatPrice(originalPrice)}</div>`;
+                    }
+
+                    container.innerHTML += `
+                        <div class="product-card" onclick="showConfirmModal('${code}', '${p.name}', ${originalPrice}, ${finalPrice})">
+                            ${hasDiscount ? '<div class="discount-badge">${isCash ? "💰 CASH" : "🔥 DISKON"}</div>' : ''}
+                            <div class="product-name">${p.name}</div>
+                            ${priceHtml}
+                            <div class="product-game">${p.game}</div>
+                        </div>
+                    `;
+                }
+            }
+        }
+
+        function showConfirmModal(code, name, originalPrice, finalPrice) {
+            const customerName = document.getElementById('customerName').value;
+            const customerPhone = document.getElementById('customerPhone').value;
+            const customerId = document.getElementById('customerId').value;
+
+            if(!customerPhone) { showToast('Masukkan nomor WhatsApp!'); return; }
+            if(!customerId) { showToast('Masukkan User ID game!'); return; }
+
+            const paymentText = selectedPayment === 'dana' ? 'DANA' : 'Cash (Bayar Langsung ke JUAN)';
+            const isCash = (selectedPayment === 'cash');
+
+            pendingOrder = {
+                code: code,
+                name: name,
+                originalPrice: originalPrice,
+                finalPrice: finalPrice,
+                customerName: customerName,
+                customerPhone: customerPhone,
+                customerId: customerId,
+                payment: selectedPayment,
+                voucher: activeVoucher,
+                isCash: isCash
+            };
+
+            const modalDetail = document.getElementById('modalDetail');
+            let hargaHtml = `<p><strong>💰 Harga:</strong> ${formatPrice(finalPrice)}</p>`;
+
+            let diskonInfo = '';
+            if(activeVoucher) {
+                const voucher = VOUCHERS[activeVoucher];
+                const saved = originalPrice - getFinalPrice(originalPrice, true, false);
+                diskonInfo += `<p class="discount-info">🎟️ Voucher ${activeVoucher}: ${voucher.type === 'percent' ? `diskon ${voucher.value}%` : `potong Rp${voucher.value.toLocaleString()}`} (hemat Rp${saved.toLocaleString()})</p>`;
+            }
+            if(isCash && finalPrice !== originalPrice) {
+                diskonInfo += `<p class="discount-info">💰 Metode Cash: Pembulatan harga dari ${formatPrice(originalPrice)} menjadi ${formatPrice(finalPrice)}</p>`;
+            }
+
+            modalDetail.innerHTML = `
+                <p><strong>🎮 Game:</strong> ${selectedGame}</p>
+                <p><strong>💎 Produk:</strong> ${name}</p>
+                ${hargaHtml}
+                ${diskonInfo}
+                <p><strong>📱 WA:</strong> ${customerPhone}</p>
+                <p><strong>🆔 User ID:</strong> ${customerId}</p>
+                <p><strong>💳 Metode:</strong> ${paymentText}</p>
+                <hr style="border-color:#333; margin:8px 0">
+                <p style="color:#ffaa00;">⚠️ Pastikan data di atas sudah benar!</p>
+            `;
+
+            document.getElementById('confirmModal').style.display = 'flex';
+        }
+
+        async function prosesOrder() {
+            if(!pendingOrder) return;
+            const { code, name, finalPrice, customerName, customerPhone, customerId, payment, voucher } = pendingOrder;
+            showToast('Memproses order...');
+            try {
+                const res = await fetch('/api/create-order', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        customer_name: customerName,
+                        customer_phone: customerPhone,
+                        customer_id: customerId,
+                        product_code: code,
+                        metode: payment,
+                        voucher: voucher,
+                        original_price: pendingOrder.originalPrice,
+                        final_price: finalPrice
+                    })
+                });
+                const data = await res.json();
+                if(data.success) {
+                    showToast(`✅ Order ${data.order_id} berhasil!`);
+                    const msg = `✅ ORDER BERHASIL!\n\n🆔 ORDER ID: ${data.order_id}\n🎮 Game: ${selectedGame}\n💎 Produk: ${name}\n💰 Harga: ${formatPrice(finalPrice)}\n💳 Metode: ${payment === 'dana' ? 'DANA' : 'Cash'}\n\n📲 Transfer ke DANA: ${data.dana_number}\n📝 Catatan: ORDER ${data.order_id}\n\n⚠️ Simpan ORDER ID untuk konfirmasi!`;
+                    alert(msg);
+                    document.getElementById('confirmModal').style.display = 'none';
+                    pendingOrder = null;
+                    if(payment === 'dana') {
+                        setTimeout(() => window.location.href = "dana://", 1500);
+                    }
+                } else {
+                    showToast('❌ Gagal: ' + data.message);
+                }
+            } catch(e) {
+                showToast('❌ Error: ' + e.message);
+            }
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toastMsg');
+            toast.innerText = msg;
+            toast.style.display = 'block';
+            setTimeout(() => toast.style.display = 'none', 3000);
+        }
+
+        // ========== EVENT LISTENER ==========
+        document.getElementById('applyVoucherBtn').addEventListener('click', applyVoucher);
+        document.getElementById('removeVoucherBtn').addEventListener('click', removeVoucher);
+        document.getElementById('confirmYes').addEventListener('click', prosesOrder);
+        document.getElementById('confirmNo').addEventListener('click', () => {
+            document.getElementById('confirmModal').style.display = 'none';
+            pendingOrder = null;
+        });
+        document.getElementById('customerPhone').addEventListener('change', function() {
+            activeVoucher = null;
+            document.getElementById('voucherApplied').style.display = 'none';
+            displayProducts();
+            updateUsedVouchersDisplay();
+        });
+        window.addEventListener('click', (e) => {
+            if (e.target === document.getElementById('confirmModal')) {
+                document.getElementById('confirmModal').style.display = 'none';
+                pendingOrder = null;
+            }
+        });
+
+        // ========== INIT ==========
+        selectPayment('dana');
+        selectGame('FF');
+        displayProducts();
+        updateUsedVouchersDisplay();
+    </script>
+</body>
+</html>
