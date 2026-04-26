@@ -15,7 +15,7 @@ DANA_NUMBER = "6289654652309"
 
 # ========== API TOP UP BOY ==========
 TOPUPBOY_API_KEY = "YTiobTi9-UPQegDAS-msQPjh4i-Cszu80YN"
-TOPUPBOY_API_URL = "https://topupboy.com/api/v1/topup"  # GANTI DENGAN ENDPOINT ASLI
+TOPUPBOY_API_URL = "https://topupboy.com/api/v1/transaction"  # GANTI DENGAN ENDPOINT ASLI
 
 # ========== PRODUK ==========
 PRODUCTS = {
