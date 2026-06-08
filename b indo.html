@@ -1,0 +1,1176 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aplikasi Soal ASAT Bahasa Indonesia - Kelas 5</title>
+    <style>
+        :root {
+            --primary-color: #1e3a8a;
+            --primary-light: #eff6ff;
+            --accent-color: #3b82f6;
+            --text-main: #1f2937;
+            --text-muted: #4b5563;
+            --bg-page: #f8fafc;
+            --bg-card: #ffffff;
+            --border-color: #e2e8f0;
+            --success-color: #10b981;
+            --success-light: #ecfdf5;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        header p {
+            margin: 10px 0 0 0;
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 0 20px;
+            box-sizing: border-box;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-top: 40px;
+            margin-bottom: 15px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .quiz-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .quiz-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .meta-info {
+            font-size: 11px;
+            font-weight: bold;
+            text-transform: uppercase;
+            color: var(--accent-color);
+            margin-bottom: 8px;
+            display: inline-block;
+            background-color: var(--primary-light);
+            padding: 3px 8px;
+            border-radius: 4px;
+        }
+
+        .question-text {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .context-box {
+            background-color: #f1f5f9;
+            border-left: 4px solid #94a3b8;
+            padding: 12px;
+            margin-bottom: 15px;
+            font-style: italic;
+            font-size: 14px;
+            border-radius: 0 6px 6px 0;
+        }
+
+        .options-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .option-item {
+            margin-bottom: 10px;
+        }
+
+        .option-label {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 14px;
+        }
+
+        .option-label:hover {
+            background-color: var(--primary-light);
+            border-color: var(--accent-color);
+        }
+
+        .option-label input {
+            margin-right: 12px;
+            accent-color: var(--accent-color);
+            transform: scale(1.1);
+        }
+
+        .input-response {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 14px;
+            box-sizing: border-box;
+            transition: border-color 0.2s;
+        }
+
+        .input-response:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+        }
+
+        textarea.input-response {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .footer-action {
+            text-align: center;
+            margin: 40px 0 6px 0;
+        }
+
+        .btn-submit {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 14px 40px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(30, 58, 138, 0.2);
+            transition: background-color 0.2s;
+        }
+
+        .btn-submit:hover {
+            background-color: #172554;
+        }
+
+        #result-modal {
+            display: none;
+            background-color: var(--success-light);
+            border: 2px solid var(--success-color);
+            border-radius: 12px;
+            padding: 24px;
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        #result-modal h2 {
+            color: var(--success-color);
+            margin-top: 0;
+        }
+
+        .score-display {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--primary-color);
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>SOAL ASESMEN SUMATIF AKHIR TAHUN (ASAT)</h1>
+        <p>Mata Pelajaran: Bahasa Indonesia | Kelas: 5 SD</p>
+    </header>
+
+    <div class="container">
+        <form id="quizForm">
+            <div class="section-title">BAGIAN A: PILIHAN GANDA</div>
+            <!-- Soal 1 -->
+            <div class="quiz-card">
+                <div class="meta-info">No. 1 - Singkatan</div>
+                <div class="context-box">"Sumber Daya Alam (SDA) di Indonesia sangat melimpah, salah satunya kelautan."</div>
+                <div class="question-text">Manakah kata dalam teks di atas yang merupakan contoh kata singkatan?</div>
+                <ul class="options-list">
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q1" value="0">
+                            <span>A. SDA</span>
+                        </label>
+                    </li>
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q1" value="1">
+                            <span>B. Puskesmas</span>
+                        </label>
+                    </li>
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q1" value="2">
+                            <span>C. Kemenkes</span>
+                        </label>
+                    </li>
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q1" value="3">
+                            <span>D. Rudal</span>
+                        </label>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Soal 2 -->
+            <div class="quiz-card">
+                <div class="meta-info">No. 2 - Fakta dan Opini</div>
+                <div class="question-text">Tentukan kalimat fakta dari teks?</div>
+                <ul class="options-list">
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q2" value="0">
+                            <span>A. Indonesia adalah negara kepulauan.</span>
+                        </label>
+                    </li>
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q2" value="1">
+                            <span>B. Makanan itu rasanya sangat lezat sekali.</span>
+                        </label>
+                    </li>
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q2" value="2">
+                            <span>C. Besok tampaknya akan turun hujan lebat.</span>
+                        </label>
+                    </li>
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q2" value="3">
+                            <span>D. Belajar Bahasa Indonesia sangat membosankan.</span>
+                        </label>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Soal 3 -->
+            <div class="quiz-card">
+                <div class="meta-info">No. 3 - Struktur Surel</div>
+                <div class="question-text">Tentukan subjek surel?</div>
+                <ul class="options-list">
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q3" value="0">
+                            <span>A. Bagian berisi pesan utama atau isi surel</span>
+                        </label>
+                    </li>
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q3" value="1">
+                            <span>B. Bagian berisi judul atau inti dari surel yang dikirim</span>
+                        </label>
+                    </li>
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q3" value="2">
+                            <span>C. Alamat email orang yang menerima pesan</span>
+                        </label>
+                    </li>
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q3" value="3">
+                            <span>D. Lampiran dokumen berupa foto atau file</span>
+                        </label>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Soal 4 -->
+            <div class="quiz-card">
+                <div class="meta-info">No. 4 - Singkatan Umum</div>
+                <div class="question-text">Apakah kepanjangan dari singkatan umum <strong>"dll."</strong>?</div>
+                <ul class="options-list">
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q4" value="0">
+                            <span>A. dan kawan-kawan</span>
+                        </label>
+                    </li>
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q4" value="1">
+                            <span>B. dan lain-lain</span>
+                        </label>
+                    </li>
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q4" value="2">
+                            <span>C. sampai dengan</span>
+                        </label>
+                    </li>
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q4" value="3">
+                            <span>D. halaman</span>
+                        </label>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Soal 5 -->
+            <div class="quiz-card">
+                <div class="meta-info">No. 5 - Fakta dan Opini</div>
+                <div class="question-text">Identifikasi kalimat opini?</div>
+                <ul class="options-list">
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q5" value="0">
+                            <span>A. Sapi adalah hewan herbivora memamah biak.</span>
+                        </label>
+                    </li>
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q5" value="1">
+                            <span>B. Kucing memiliki empat kaki dan berbulu.</span>
+                        </label>
+                    </li>
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q5" value="2">
+                            <span>C. Rumah itu terlihat sangat mewah dan megah.</span>
+                        </label>
+                    </li>
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q5" value="3">
+                            <span>D. Jakarta adalah ibu kota negara Indonesia.</span>
+                        </label>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Soal 6 -->
+            <div class="quiz-card">
+                <div class="meta-info">No. 6 - Akronim</div>
+                <div class="question-text">Tentukan kepanjangan akronim puskesmas?</div>
+                <ul class="options-list">
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q6" value="0">
+                            <span>A. Pusat Kesehatan Masyarakat</span>
+                        </label>
+                    </li>
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q6" value="1">
+                            <span>B. Pusat Keselamatan Manusia</span>
+                        </label>
+                    </li>
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q6" value="2">
+                            <span>C. Pusat Kesejahteraan Masyarakat</span>
+                        </label>
+                    </li>
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q6" value="3">
+                            <span>D. Pusat Kesehatan Manusia</span>
+                        </label>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Soal 7 -->
+            <div class="quiz-card">
+                <div class="meta-info">No. 7 - Teks Eksplanasi</div>
+                <div class="context-box">"Hujan terjadi karena air laut menguap akibat panas matahari. Uap air tersebut berkumpul menjadi awan, lalu mengalami kondensasi hingga akhirnya jatuh sebagai butiran air ke bumi."</div>
+                <div class="question-text">Tentukan judul yang paling sesuai dengan teks eksplanasi di atas!</div>
+                <ul class="options-list">
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q7" value="0">
+                            <span>A. Kancil dan Buaya yang Cerdik</span>
+                        </label>
+                    </li>
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q7" value="1">
+                            <span>B. Proses Terjadinya Fenomena Hujan</span>
+                        </label>
+                    </li>
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q7" value="2">
+                            <span>C. Cara Membuat Kue Tradisional</span>
+                        </label>
+                    </li>
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q7" value="3">
+                            <span>D. Pengalaman Liburan ke Rumah Nenek</span>
+                        </label>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Soal 8 -->
+            <div class="quiz-card">
+                <div class="meta-info">No. 8 - Ejaan (Huruf Kapital)</div>
+                <div class="question-text">Tentukan penulisan huruf kapital yang tepat?</div>
+                <ul class="options-list">
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q8" value="0">
+                            <span>A. Sultan Hasanuddin lahir di Makassar.</span>
+                        </label>
+                    </li>
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q8" value="1">
+                            <span>B. sultan hasanuddin lahir di makassar.</span>
+                        </label>
+                    </li>
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q8" value="2">
+                            <span>C. Sultan hasanuddin lahir di makassar.</span>
+                        </label>
+                    </li>
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q8" value="3">
+                            <span>D. Sultan Hasanuddin lahir di makassar.</span>
+                        </label>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Soal 9 -->
+            <div class="quiz-card">
+                <div class="meta-info">No. 9 - Kalimat Perintah</div>
+                <div class="question-text">Manakah di bawah ini yang merupakan contoh kalimat perintah?</div>
+                <ul class="options-list">
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q9" value="0">
+                            <span>A. Tolong ambilkan buku itu!</span>
+                        </label>
+                    </li>
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q9" value="1">
+                            <span>B. Wah, indah sekali pemandangan ini!</span>
+                        </label>
+                    </li>
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q9" value="2">
+                            <span>C. Apakah kamu sudah makan siang?</span>
+                        </label>
+                    </li>
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q9" value="3">
+                            <span>D. Ibu pergi ke pasar pagi tadi.</span>
+                        </label>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Soal 10 -->
+            <div class="quiz-card">
+                <div class="meta-info">No. 10 - Kalimat Ajakan</div>
+                <div class="question-text">Tentukan contoh kalimat ajakan?</div>                <ul class="options-list">
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q10" value="0">
+                            <span>A. Jangan membuang sampah sembarangan!</span>
+                        </label>
+                    </li>
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q10" value="1">
+                            <span>B. Mari kita menjaga kebersihan lingkungan sekolah!</span>
+                        </label>
+                    </li>
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q10" value="2">
+                            <span>C. Siapa yang membawa penghapus ini?</span>
+                        </label>
+                    </li>
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q10" value="3">
+                            <span>D. Kakak sedang membaca buku di kamar.</span>
+                        </label>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Soal 11 -->
+            <div class="quiz-card">
+                <div class="meta-info">No. 11 - Kalimat Majemuk</div>
+                <div class="question-text">Tentukan jenis kalimat majemuk?</div>
+                <ul class="options-list">
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q11" value="0">
+                            <span>A. Kalimat majemuk setara</span>
+                        </label>
+                    </li>
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q11" value="1">
+                            <span>B. Kalimat tunggal berpredikat</span>
+                        </label>
+                    </li>
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q11" value="2">
+                            <span>C. Kalimat tanya retoris</span>
+                        </label>
+                    </li>
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q11" value="3">
+                            <span>D. Kalimat perintah larangan</span>
+                        </label>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Soal 12 -->
+            <div class="quiz-card">
+                <div class="meta-info">No. 12 - Kalimat Majemuk Bertingkat</div>
+                <div class="question-text">Membentuk kalimat majemuk bertingkat?</div>
+                <ul class="options-list">
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q12" value="0">
+                            <span>A. Ayah membaca koran ketika Ibu sedang memasak di dapur.</span>
+                        </label>
+                    </li>
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q12" value="1">
+                            <span>B. Ayah membaca koran dan Ibu memasak di dapur.</span>
+                        </label>
+                    </li>
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q12" value="2">
+                            <span>C. Ayah membaca koran, sedangkan Ibu memasak.</span>
+                        </label>
+                    </li>
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q12" value="3">
+                            <span>D. Ayah membaca koran atau Ibu memasak.</span>
+                        </label>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Soal 13 -->
+            <div class="quiz-card">
+                <div class="meta-info">No. 13 - Konjungsi (kata hubung)</div>
+                <div class="question-text">Budi adalah anak yang sangat pintar, ... ia terkadang malas belajar.<br><br>Kata hubung (konjungsi) yang paling tepat untuk melengkapi kalimat rumpang di atas adalah...</div>
+                <ul class="options-list">
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q13" value="0">
+                            <span>A. karena</span>
+                        </label>
+                    </li>
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q13" value="1">
+                            <span>B. tetapi</span>
+                        </label>
+                    </li>
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q13" value="2">
+                            <span>C. dan</span>
+                        </label>
+                    </li>
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q13" value="3">
+                            <span>D. sehingga</span>
+                        </label>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Soal 14 -->
+            <div class="quiz-card">
+                <div class="meta-info">No. 14 - Imbuhan pe-an</div>
+                <div class="question-text">Tentukan makna imbuhan pe-an?</div>
+                <ul class="options-list">
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q14" value="0">
+                            <span>A. Menyatakan tempat atau proses</span>
+                        </label>
+                    </li>
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q14" value="1">
+                            <span>B. Menyatakan alat yang digunakan</span>
+                        </label>
+                    </li>
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q14" value="2">
+                            <span>C. Menyatakan sifat atau keadaan</span>
+                        </label>
+                    </li>
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q14" value="3">
+                            <span>D. Menyatakan jumlah atau satuan</span>
+                        </label>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Soal 15 -->
+            <div class="quiz-card">
+                <div class="meta-info">No. 15 - Imbuhan pe-an</div>
+                <div class="question-text">Manakah kalimat di bawah ini yang menggunakan kata berimbuhan pe-an dengan makna menyatakan suatu <strong>proses</strong>?</div>
+                <ul class="options-list">
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q15" value="0">
+                            <span>A. Pembangunan gedung sekolah itu memakan waktu enam bulan.</span>
+                        </label>
+                    </li>
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q15" value="1">
+                            <span>B. Pelabuhan Tanjung Priok terlihat sangat ramai hari ini.</span>
+                        </label>
+                    </li>
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q15" value="2">
+                            <span>C. Pemandian air panas itu sangat ramai dikunjungi wisatawan.</span>
+                        </label>
+                    </li>
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q15" value="3">
+                            <span>D. Pedalaman desa itu belum terjangkau aliran listrik.</span>
+                        </label>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Soal 16 -->
+            <div class="quiz-card">
+                <div class="meta-info">No. 16 - Imbuhan ter-</div>
+                <div class="question-text">Tentukan makna awalan ter-?</div>
+                <ul class="options-list">
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q16" value="0">
+                            <span>A. Paling atau tidak sengaja</span>
+                        </label>
+                    </li>
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q16" value="1">
+                            <span>B. Melakukan pekerjaan</span>
+                        </label>
+                    </li>
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q16" value="2">
+                            <span>C. Saling mengenai</span>
+                        </label>
+                    </li>
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q16" value="3">
+                            <span>D. Banyak menghasilkan</span>
+                        </label>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Soal 17 -->
+            <div class="quiz-card">
+                <div class="meta-info">No. 17 - Imbuhan ter-</div>
+                <div class="question-text">Manakah kalimat di bawah ini yang menunjukkan makna awalan ter- yang menyatakan suatu <strong>keadaan</strong>?</div>
+                <ul class="options-list">
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q17" value="0">
+                            <span>A. Pintu kamar adik sudah terkunci sejak sore hari.</span>
+                        </label>
+                    </li>
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q17" value="1">
+                            <span>B. Buku cerita itu terbawa oleh Kakak ke sekolah.</span>
+                        </label>
+                    </li>
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q17" value="2">
+                            <span>C. Menara itu merupakan bangunan tertinggi di kota ini.</span>
+                        </label>
+                    </li>
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q17" value="3">
+                            <span>D. Dompet Ayah tertinggal di atas meja makan.</span>
+                        </label>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Soal 18 -->
+            <div class="quiz-card">
+                <div class="meta-info">No. 18 - Imbuhan ter-</div>
+                <div class="question-text">Tentukan imbuhan ter yang menyatakan pelaku?</div>
+                <ul class="options-list">
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q18" value="0">
+                            <span>A. tersangka</span>
+                        </label>
+                    </li>
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q18" value="1">
+                            <span>B. terpandai</span>
+                        </label>
+                    </li>
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q18" value="2">
+                            <span>C. terbawa</span>
+                        </label>
+                    </li>
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q18" value="3">
+                            <span>D. terinjak</span>
+                        </label>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Soal 19 -->
+            <div class="quiz-card">
+                <div class="meta-info">No. 19 - Pantun</div>
+                <div class="question-text">Identifikasi ciri-ciri pantun?</div>
+                <ul class="options-list">
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q19" value="0">
+                            <span>A. Setiap bait terdiri atas 4 baris, bersajak a-b-a-b</span>
+                        </label>
+                    </li>
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q19" value="1">
+                            <span>B. Setiap bait bebas, tidak terikat sajak akhir</span>
+                        </label>
+                    </li>
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q19" value="2">
+                            <span>C. Terdiri atas sampiran semua tanpa isi</span>
+                        </label>
+                    </li>
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q19" value="3">
+                            <span>D. Semua baris merupakan isi cerita</span>
+                        </label>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Soal 20 -->
+            <div class="quiz-card">
+                <div class="meta-info">No. 20 - Pantun</div>
+                <div class="question-text">Identifikasi bagian dari pantun?</div>
+                <ul class="options-list">
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q20" value="0">
+                            <span>A. Baris 1 & 2 adalah sampiran, baris 3 & 4 adalah isi</span>
+                        </label>
+                    </li>
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q20" value="1">
+                            <span>B. Baris 1 & 2 adalah isi, baris 3 & 4 adalah sampiran</span>
+                        </label>
+                    </li>
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q20" value="2">
+                            <span>C. Semua baris adalah sampiran pembuka</span>
+                        </label>
+                    </li>
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q20" value="3">
+                            <span>D. Semua baris adalah makna petuah</span>
+                        </label>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Soal 21 -->
+            <div class="quiz-card">
+                <div class="meta-info">No. 21 - Pantun</div>
+                <div class="question-text">Tentukan jenis pantun?</div>
+                <ul class="options-list">
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q21" value="0">
+                            <span>A. Pantun Jenaka / Nasihat</span>
+                        </label>
+                    </li>
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q21" value="1">
+                            <span>B. Puisi Modern</span>
+                        </label>
+                    </li>
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q21" value="2">
+                            <span>C. Prosa Bebas</span>
+                        </label>
+                    </li>
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q21" value="3">
+                            <span>D. Gurindam Dua Belas</span>
+                        </label>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Soal 22 -->
+            <div class="quiz-card">
+                <div class="meta-info">No. 22 - Kata Hubung</div>
+                <div class="question-text">Identifikasi kata hubung yang tepat?</div>
+                <ul class="options-list">
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q22" value="0">
+                            <span>A. oleh karena itu</span>
+                        </label>
+                    </li>
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q22" value="1">
+                            <span>B. walaupun</span>
+                        </label>
+                    </li>
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q22" value="2">
+                            <span>C. melainkan</span>
+                        </label>
+                    </li>
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q22" value="3">
+                            <span>D. sambil</span>
+                        </label>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Soal 23 -->
+            <div class="quiz-card">
+                <div class="meta-info">No. 23 - Memberi Saran</div>
+                <div class="question-text">Tentukan cara memberi saran yang baik?</div>
+                <ul class="options-list">
+                    <li class="option-item">
+                        <label class="option-label">                            <input type="radio" name="q23" value="0">
+                            <span>A. Menggunakan kata santun seperti 'sebaiknya' atau 'seharusnya'</span>
+                        </label>
+                    </li>
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q23" value="1">
+                            <span>B. Menggunakan kalimat perintah yang tegas dan membentak</span>
+                        </label>
+                    </li>
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q23" value="2">
+                            <span>C. Menyampaikan di depan umum agar orang tersebut malu</span>
+                        </label>
+                    </li>
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q23" value="3">
+                            <span>D. Memaksa orang lain agar mengikuti semua kemauan kita</span>
+                        </label>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Soal 24 -->
+            <div class="quiz-card">
+                <div class="meta-info">No. 24 - Membaca Pidato</div>
+                <div class="question-text">Identifikasi unsur membaca pidato?</div>
+                <ul class="options-list">
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q24" value="0">
+                            <span>A. Intonasi, lafal, ekspresi, dan artikulasi yang jelas</span>
+                        </label>
+                    </li>
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q24" value="1">
+                            <span>B. Membaca dengan cepat tanpa jeda sedikit pun</span>
+                        </label>
+                    </li>
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q24" value="2">
+                            <span>C. Menundukkan kepala sepanjang membaca teks</span>
+                        </label>
+                    </li>
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q24" value="3">
+                            <span>D. Menggunakan suara yang sangat pelan dan berbisik</span>
+                        </label>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Soal 25 -->
+            <div class="quiz-card">
+                <div class="meta-info">No. 25 - Struktur Pidato</div>
+                <div class="question-text">Tentukan isi bagian penutup pidato?</div>
+                <ul class="options-list">
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q25" value="0">
+                            <span>A. Permohonan maaf, harapan, dan salam penutup</span>
+                        </label>
+                    </li>
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q25" value="1">
+                            <span>B. Ucapan syukur dan salam pembuka acara</span>
+                        </label>
+                    </li>
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q25" value="2">
+                            <span>C. Penyampaian materi inti secara terperinci</span>
+                        </label>
+                    </li>
+                    <li class="option-item">
+                        <label class="option-label">
+                            <input type="radio" name="q25" value="3">
+                            <span>D. Latar belakang pemilihan topik pidato</span>
+                        </label>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="section-title">BAGIAN B: ISIAN SINGKAT</div>
+            <!-- Soal 26 -->
+            <div class="quiz-card">
+                <div class="meta-info">No. 26 - Iklan</div>
+                <div class="context-box" style="text-align:center; font-style:normal; background-color:#eff6ff; border-left:4px solid #3b82f6;">[ Gambar Poster: Layanan Imunisasi Polio Gratis di Posyandu ]</div>
+                <div class="question-text">Berdasarkan fungsi tujuannya, jenis iklan pada gambar ilustrasi di atas termasuk ke dalam iklan...</div>
+                <input type="text" class="input-response" name="q26" placeholder="Ketik jawaban singkat Anda di sini...">
+            </div>
+
+            <!-- Soal 27 -->
+            <div class="quiz-card">
+                <div class="meta-info">No. 27 - Iklan</div>
+                <div class="context-box" style="font-style:normal;">"Gunakan Lampu Hemat Energi! Hemat Listrik, Hemat Biaya. Hubungi PLN 123."</div>
+                <div class="question-text">Informasi atau pesan utama yang ingin disampaikan dalam teks iklan di atas adalah...</div>
+                <input type="text" class="input-response" name="q27" placeholder="Ketik jawaban singkat Anda di sini...">
+            </div>
+
+            <!-- Soal 28 -->
+            <div class="quiz-card">
+                <div class="meta-info">No. 28 - Akronim</div>
+                <div class="context-box">"Rani pergi membeli obat di posyandu dekat rumahnya."</div>
+                <div class="question-text">Kata yang merupakan akronim pada kalimat di atas adalah...</div>
+                <input type="text" class="input-response" name="q28" placeholder="Ketik jawaban singkat Anda di sini...">
+            </div>
+
+            <!-- Soal 29 -->
+            <div class="quiz-card">
+                <div class="meta-info">No. 29 - Singkatan</div>
+                <div class="question-text">Tuliskan kepanjangan resmi dari singkatan negara <strong>UUD</strong>!</div>
+                <input type="text" class="input-response" name="q29" placeholder="Ketik jawaban singkat Anda di sini...">
+            </div>
+
+            <!-- Soal 30 -->
+            <div class="quiz-card">
+                <div class="meta-info">No. 30 - Imbuhan pe-an</div>
+                <div class="question-text">Kata "pemukiman" memiliki imbuhan pe-an. Kata dasar asli dari kata tersebut adalah...</div>
+                <input type="text" class="input-response" name="q30" placeholder="Ketik jawaban singkat Anda di sini...">
+            </div>
+
+            <!-- Soal 31 -->
+            <div class="quiz-card">
+                <div class="meta-info">No. 31 - Gagasan Utama</div>
+                <div class="context-box">"Pohon memberikan banyak manfaat bagi makhluk hidup. Daun pohon menghasilkan oksigen yang segar untuk bernapas. Akar pohon berfungsi menyerap air hujan agar tidak terjadi banjir."</div>
+                <div class="question-text">Gagasan utama atau kalimat utama dari paragraf di atas terletak pada...</div>
+                <input type="text" class="input-response" name="q31" placeholder="Ketik jawaban singkat Anda di sini...">
+            </div>
+
+            <!-- Soal 32 -->
+            <div class="quiz-card">
+                <div class="meta-info">No. 32 - Gagasan Penjelas</div>
+                <div class="question-text">Kalimat yang berfungsi untuk menguraikan atau memperjelas gagasan utama dalam sebuah paragraf disebut kalimat...</div>
+                <input type="text" class="input-response" name="q32" placeholder="Ketik jawaban singkat Anda di sini...">
+            </div>
+
+            <!-- Soal 33 -->
+            <div class="quiz-card">
+                <div class="meta-info">No. 33 - Akronim</div>
+                <div class="question-text">Tuliskan bentuk akronim resmi dari kompilasi kata: <strong>Hari Pendidikan Nasional</strong>!</div>
+                <input type="text" class="input-response" name="q33" placeholder="Ketik jawaban singkat Anda di sini...">
+            </div>
+
+            <!-- Soal 34 -->
+            <div class="quiz-card">
+                <div class="meta-info">No. 34 - Pantun</div>
+                <div class="context-box" style="white-space: pre-line;">Ada pohon tumbuh berjajar,\nDi bawahnya tempat berteduh.\nJika kita malas belajar,\nPenyesalan akan datang membunuh.</div>
+                <div class="question-text">Dua baris pertama pada bait pantun di atas disebut sebagai bagian...</div>
+                <input type="text" class="input-response" name="q34" placeholder="Ketik jawaban singkat Anda di sini...">
+            </div>
+
+            <!-- Soal 35 -->
+            <div class="quiz-card">
+                <div class="meta-info">No. 35 - Imbuhan ter-</div>
+                <div class="context-box">"Buku cerita milik Kakak tidak sengaja terbawa oleh adik ke sekolah."</div>
+                <div class="question-text">Makna dari imbuhan awalan ter- pada kata "terbawa" dalam kalimat di atas adalah...</div>
+                <input type="text" class="input-response" name="q35" placeholder="Ketik jawaban singkat Anda di sini...">
+            </div>
+
+            <div class="section-title">BAGIAN C: URAIAN</div>
+            <!-- Soal 36 -->
+            <div class="quiz-card">
+                <div class="meta-info">No. 36 - Ejaan</div>
+                <div class="context-box">"pada hari minggu, budi dan iwan pergi berlibur ke danau toba."</div>
+                <div class="question-text">Perbaikilah kalimat di atas dengan menggunakan aturan penulisan ejaan huruf kapital yang tepat!</div>
+                <textarea class="input-response" name="q36" placeholder="Tuliskan jawaban penjelasan lengkap Anda di sini..."></textarea>
+            </div>
+
+            <!-- Soal 37 -->
+            <div class="quiz-card">
+                <div class="meta-info">No. 37 - Kalimat Perintah</div>
+                <div class="question-text">Tuliskan 2 (dua) buah contoh kalimat ajakan yang baik dan benar untuk mengajak teman bersama-sama merawat tanaman sekolah!</div>
+                <textarea class="input-response" name="q37" placeholder="Tuliskan jawaban penjelasan lengkap Anda di sini..."></textarea>
+            </div>
+
+            <!-- Soal 38 -->
+            <div class="quiz-card">
+                <div class="meta-info">No. 38 - Memberi Saran</div>
+                <div class="context-box">"Kamar tidur milik Rudi terlihat sangat berantakan. Pakaian kotor, mainan, dan buku sekolah berserakan di lantai."</div>
+                <div class="question-text">Berikan saran yang santun, logis, dan tepat sesuai dengan konteks kondisi di atas!</div>
+                <textarea class="input-response" name="q38" placeholder="Tuliskan jawaban penjelasan lengkap Anda di sini..."></textarea>
+            </div>
+
+            <!-- Soal 39 -->
+            <div class="quiz-card">
+                <div class="meta-info">No. 39 - Pantun</div>
+                <div class="context-box" style="white-space: pre-line;">Ke hulu membuat pagar,\nJangan lupa membawa kapak.\nMari kita rajin belajar,\nAgar kelak dipuji bapak.</div>
+                <div class="question-text">Simpulkan apa arti amanat/isi utama yang ingin disampaikan dari bait pantun nasihat di atas!</div>
+                <textarea class="input-response" name="q39" placeholder="Tuliskan jawaban penjelasan lengkap Anda di sini..."></textarea>
+            </div>
+
+            <!-- Soal 40 -->
+            <div class="quiz-card">
+                <div class="meta-info">No. 40 - Pantun</div>
+                <div class="question-text">Buatlah sebuah bait pantun kreasi orisinal buatanmu sendiri dengan tema "Pentingnya Menjaga Kebersihan Lingkungan"! (Wajib terdiri dari 4 baris dan memiliki rima a-b-a-b)</div>
+                <textarea class="input-response" name="q40" placeholder="Tuliskan jawaban penjelasan lengkap Anda di sini..."></textarea>
+            </div>
+
+            <div class="footer-action">
+                <button type="button" class="btn-submit" onclick="gradeQuiz()">Kirim & Evaluasi Jawaban</button>
+            </div>
+        </form>
+
+        <div id="result-modal">
+            <h2>Hasil Evaluasi Mandiri Berhasil!</h2>
+            <p>Skor Pilihan Ganda Anda:</p>
+            <div class="score-display" id="scoreValue">0 / 25</div>
+            <p style="color: var(--text-muted); font-size: 13px; margin-top: 15px;">
+                *Catatan: Untuk jawaban bagian Isian dan Uraian, silakan lakukan pemeriksaan mandiri <br>berdasarkan kunci jawaban yang disesuaikan oleh guru pengajar.
+            </p>
+        </div>
+    </div>
+
+    <script>
+        function gradeQuiz() {
+            const correctAnswers = {
+                "q1": 0, "q2": 0, "q3": 1, "q4": 1, "q5": 2, "q6": 0, "q7": 1, "q8": 0, "q9": 0, "q10": 1,
+                "q11": 0, "q12": 0, "q13": 1, "q14": 0, "q15": 0, "q16": 0, "q17": 0, "q18": 0, "q19": 0, "q20": 0,
+                "q21": 0, "q22": 0, "q23": 0, "q24": 0, "q25": 1
+            };
+
+            let score = 0;
+            const totalPg = Object.keys(correctAnswers).length;
+            const form = document.getElementById('quizForm');
+            const formData = new FormData(form);
+
+            for (let key in correctAnswers) {
+                if (formData.has(key) && parseInt(formData.get(key)) === correctAnswers[key]) {
+                    score++;
+                }
+            }
+
+            document.getElementById('scoreValue').innerText = score + " / " + totalPg;
+            const resultBox = document.getElementById('result-modal');
+            resultBox.style.display = 'block';
+            resultBox.scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
